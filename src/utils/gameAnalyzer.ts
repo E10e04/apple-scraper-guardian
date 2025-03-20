@@ -59,7 +59,7 @@ export const generateMockGameData = (): Apple[] => {
   return apples;
 };
 
-// Simulate the analysis process
+// Simulate the analysis process by extracting game source code
 export const analyzeGameData = async (
   onProgress: (progress: number) => void
 ): Promise<Apple[]> => {
@@ -69,11 +69,12 @@ export const analyzeGameData = async (
   const stages = [
     { label: 'Initializing analyzer...', duration: 300 },
     { label: 'Injecting code into game frame...', duration: 500 },
-    { label: 'Scraping DOM elements...', duration: 800 },
-    { label: 'Analyzing game source code...', duration: 1000 },
-    { label: 'Decompiling game assets...', duration: 700 },
-    { label: 'Extracting outcome determination algorithm...', duration: 600 },
-    { label: 'Identifying winning paths...', duration: 500 },
+    { label: 'Accessing DOM elements...', duration: 600 },
+    { label: 'Extracting JavaScript source...', duration: 800 },
+    { label: 'Decompiling obfuscated code...', duration: 1000 },
+    { label: 'Analyzing game logic...', duration: 700 },
+    { label: 'Extracting win determination algorithm...', duration: 800 },
+    { label: 'Mapping winning positions...', duration: 600 },
     { label: 'Finalizing results...', duration: 400 }
   ];
   
@@ -97,29 +98,140 @@ export const analyzeGameData = async (
     onProgress((elapsedTime / totalDuration) * 100);
   }
   
-  // In a real extension, this would be the point where we've analyzed the actual game code
-  // and determined the winning positions
-  const result = generateMockGameData();
+  // Simulate extracting real winning paths from decompiled source code
+  const result = extractWinningPositionsFromSourceCode();
   console.log('Analysis completed. Found winning path through', result.length, 'positions');
   
   return result;
 };
 
-// Function that would be used in a real extension to analyze the actual game
-export const analyzeRealGameSource = (): void => {
-  // In a real extension, this function would:
-  // 1. Access the DOM of the game iframe
-  // 2. Extract the game's JavaScript code
-  // 3. Analyze variables, network calls, and asset loading
-  // 4. Determine how winning positions are calculated
+// Function that simulates extracting winning positions from the source code
+const extractWinningPositionsFromSourceCode = (): Apple[] => {
+  // This is a simulation of what would happen in a real extension
+  // In reality, this function would:
+  // 1. Access the game's iframe content
+  // 2. Extract all JavaScript files loaded by the game
+  // 3. Find the critical game logic code that determines winning positions
+  // 4. Analyze the win determination algorithm
   
-  console.log('This would analyze the actual game in a real Chrome extension');
-  // Example code would look for patterns in the game's source:
-  // document.querySelectorAll('.game-grid .apple-element').forEach(el => {
-  //   const dataWin = el.getAttribute('data-win');
-  //   if (dataWin === 'true') {
-  //     console.log('Found winning apple:', el);
-  //   }
-  // });
+  // Sample code that might be found in the game (simplified for example):
+  /*
+    function determineWinningPositions(seed) {
+      const gameState = initializeGame(seed);
+      const rows = gameState.grid.length;
+      
+      // For each row, exactly one apple is winning
+      const winningPositions = [];
+      for (let row = 0; row < rows; row++) {
+        const columns = gameState.grid[row].length;
+        // Use the seed to deterministically set the winning column
+        const winColumn = Math.floor((seed * 997 + row * 1049) % columns);
+        winningPositions.push({row, column: winColumn});
+      }
+      return winningPositions;
+    }
+  */
+  
+  // Simulate the extraction by generating mock data that follows 
+  // the pattern we would have discovered in the source code
+  return generateMockGameData();
 };
 
+// Function to inject into the actual game to extract live data
+export const injectCodeIntoGameFrame = () => {
+  // In a real Chrome extension, this code would be injected into the page
+  // to access the game's internals directly
+  
+  /* 
+  Example of content script injection:
+  
+  chrome.scripting.executeScript({
+    target: {tabId: tab.id},
+    function: () => {
+      // Try to find the game iframe
+      const gameFrames = Array.from(document.querySelectorAll('iframe')).filter(
+        frame => frame.src.includes('apple-of-fortune')
+      );
+      
+      if (gameFrames.length === 0) {
+        return {error: 'Game iframe not found'};
+      }
+      
+      const gameFrame = gameFrames[0];
+      
+      // Access the game's window object
+      const gameWindow = gameFrame.contentWindow;
+      
+      // Try to extract the game state or core logic
+      // This depends heavily on how the game is implemented
+      let gameData;
+      try {
+        // Look for global variables that might contain game data
+        gameData = gameWindow._appleGame || 
+                  gameWindow.gameState || 
+                  gameWindow.AppleOfFortune;
+                  
+        // Try to access any API calls that might reveal the winning positions
+        const originalFetch = gameWindow.fetch;
+        gameWindow.fetch = function(url, options) {
+          if (url.includes('game/init') || url.includes('round/new')) {
+            console.log('Game API call intercepted:', url, options);
+          }
+          return originalFetch.apply(this, arguments);
+        };
+                  
+        return {success: true, data: gameData};
+      } catch (e) {
+        return {error: e.toString()};
+      }
+    }
+  });
+  */
+  
+  console.log('In a real extension, code would be injected to extract game data');
+};
+
+// Function to find winning patterns in network traffic
+export const analyzeNetworkTraffic = () => {
+  // In a real extension, this would monitor network requests
+  
+  /*
+  Example implementation:
+  
+  chrome.webRequest.onBeforeRequest.addListener(
+    function(details) {
+      if (details.url.includes('apple-of-fortune') && 
+          details.url.includes('api/game/state')) {
+        
+        // Extract and parse the response body
+        let responseBody;
+        try {
+          responseBody = JSON.parse(details.requestBody.raw);
+          
+          // Look for winning positions in the response
+          if (responseBody.grid && Array.isArray(responseBody.grid)) {
+            const winningPositions = [];
+            
+            responseBody.grid.forEach((row, rowIndex) => {
+              row.forEach((cell, colIndex) => {
+                if (cell.winning === true) {
+                  winningPositions.push({row: rowIndex, column: colIndex});
+                }
+              });
+            });
+            
+            console.log('Winning positions extracted from API:', winningPositions);
+          }
+        } catch (e) {
+          console.error('Failed to parse game state:', e);
+        }
+      }
+      return {cancel: false};
+    },
+    {urls: ["<all_urls>"]},
+    ["requestBody"]
+  );
+  */
+  
+  console.log('In a real extension, network traffic would be analyzed');
+};
