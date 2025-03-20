@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Power } from 'lucide-react';
+import { Power, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ToggleButtonProps {
@@ -34,15 +34,44 @@ const ToggleButton = ({ isActive, onToggle, className }: ToggleButtonProps) => {
           scale: isActive ? 1 : 0.8
         }}
         transition={{ duration: 0.3, type: 'spring', stiffness: 500 }}
+        className="relative"
       >
-        <Power 
-          size={24} 
-          className={cn(
-            'stroke-current',
-            isActive ? 'opacity-100' : 'opacity-70'
-          )} 
-        />
+        {isActive ? (
+          <Shield 
+            size={24} 
+            className="stroke-current text-white" 
+          />
+        ) : (
+          <Power 
+            size={24} 
+            className="stroke-current opacity-70" 
+          />
+        )}
+        
+        {isActive && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"
+          />
+        )}
       </motion.div>
+      
+      {/* Pulsing effect when active */}
+      {isActive && (
+        <motion.div
+          className="absolute inset-0 rounded-full bg-primary opacity-30"
+          animate={{ 
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.1, 0.3]
+          }}
+          transition={{ 
+            duration: 2,
+            repeat: Infinity,
+            repeatType: 'reverse'
+          }}
+        />
+      )}
     </motion.button>
   );
 };

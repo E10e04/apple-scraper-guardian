@@ -3,13 +3,11 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Toaster } from '@/components/ui/sonner';
 import GameMonitor from '@/components/GameMonitor';
-import { Apple } from '@/utils/gameAnalyzer';
 
 const Index = () => {
   // For demo purposes, fake the game environment
   const [gameActive, setGameActive] = useState(true);
   
-  // Simulated banner for Apple of Fortune game
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <Toaster />
@@ -23,7 +21,7 @@ const Index = () => {
             transition={{ duration: 0.5 }}
             className="text-3xl font-medium mb-2"
           >
-            Analyse de Sécurité - Demo
+            Apple of Fortune - Démo
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -31,7 +29,7 @@ const Index = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="text-muted-foreground"
           >
-            Visualisation de l'environnement Apple of Fortune
+            Simulation de l'environnement du jeu pour l'extension d'analyse
           </motion.p>
         </header>
         
@@ -43,33 +41,46 @@ const Index = () => {
           className="relative w-full aspect-video bg-white rounded-xl shadow-lg overflow-hidden"
         >
           {/* Game Canvas */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-emerald-50 flex flex-col items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50 flex flex-col items-center justify-center">
             {gameActive ? (
-              <div className="relative w-4/5 h-4/5 flex items-center justify-center">
-                {/* Visual representation of the game */}
-                <div className="absolute w-[500px] h-[500px] rounded-full border-4 border-dashed border-gray-200 animate-spin-slow" style={{ animationDuration: "120s" }}></div>
-                <div className="absolute w-[400px] h-[400px] rounded-full border-2 border-dashed border-gray-200 animate-spin-slow" style={{ animationDuration: "90s" }}></div>
-                <div className="absolute w-[300px] h-[300px] rounded-full border border-dashed border-gray-200 animate-spin-slow" style={{ animationDuration: "60s" }}></div>
-                
-                {/* Game elements that would be present in real game */}
-                <div className="relative z-10 w-40 h-40 bg-red-500 rounded-full flex items-center justify-center shadow-xl">
-                  <div className="text-white font-bold text-lg">Apple of Fortune</div>
+              <div className="relative w-full h-full flex flex-col items-center justify-center">
+                {/* Game title */}
+                <div className="absolute top-4 w-full text-center">
+                  <div className="inline-block bg-red-600 text-white px-6 py-2 rounded-full font-bold">
+                    Apple of Fortune
+                  </div>
                 </div>
                 
-                {/* Placeholders for apples that would be dynamically positioned */}
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div 
-                    key={i}
-                    className="absolute w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center"
-                    style={{
-                      left: `${50 + 35 * Math.cos(i * Math.PI / 4)}%`,
-                      top: `${50 + 35 * Math.sin(i * Math.PI / 4)}%`,
-                      transform: 'translate(-50%, -50%)'
-                    }}
-                  >
-                    <div className="w-6 h-6 bg-red-400 rounded-full"></div>
+                {/* Grid of rows with apples */}
+                <div className="grid grid-rows-7 gap-6 w-4/5 h-4/5">
+                  {Array.from({ length: 7 }).map((_, rowIndex) => (
+                    <div key={`row-${rowIndex}`} className="flex justify-center items-center space-x-4">
+                      {Array.from({ length: 3 + (rowIndex % 2) }).map((_, colIndex) => (
+                        <div
+                          key={`apple-${rowIndex}-${colIndex}`}
+                          className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center border-2 border-gray-200 hover:border-gray-300 transition-colors"
+                        >
+                          <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
+                            <div className="w-2 h-3 bg-green-800 absolute -top-1 rounded-full"></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Game controls */}
+                <div className="absolute bottom-4 w-full flex justify-center space-x-4">
+                  <button className="px-4 py-2 bg-green-500 text-white rounded-md shadow-md">
+                    Encaisser
+                  </button>
+                  <div className="px-4 py-2 bg-gray-100 rounded-md shadow-md">
+                    Mise: 100€
                   </div>
-                ))}
+                  <div className="px-4 py-2 bg-yellow-100 rounded-md shadow-md">
+                    Gain Potentiel: 350€
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="text-center p-8 max-w-md">
@@ -101,15 +112,32 @@ const Index = () => {
             <li>Activez l'analyse en utilisant le bouton situé en bas à droite</li>
             <li>Patientez pendant l'analyse du code source et du jeu</li>
             <li>Une fois l'analyse terminée, les marqueurs vont apparaître sur les pommes</li>
-            <li>Les pommes avec un "+" vert sont gagnantes, celles avec un "×" rouge sont perdantes</li>
+            <li>Les pommes avec un "✓" vert sont gagnantes, celles avec un "×" rouge sont perdantes</li>
+            <li>Consultez les statistiques détaillées dans le panneau d'information</li>
           </ol>
           
           <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-md text-blue-700 text-sm">
             <p className="font-medium mb-1">Note importante</p>
             <p>
               Ceci est une démonstration de l'extension. Dans un environnement réel, l'extension analyserait 
-              automatiquement le code source du jeu à chaque fois que la page est actualisée.
+              automatiquement le code source du jeu à chaque fois que la page est actualisée, en utilisant des 
+              techniques d'inspection du DOM et d'analyse du code JavaScript pour déterminer les positions gagnantes.
             </p>
+          </div>
+          
+          <div className="mt-4 p-4 bg-yellow-50 border border-yellow-100 rounded-md text-yellow-700 text-sm">
+            <p className="font-medium mb-1">Installation en tant qu'extension Chrome</p>
+            <p>
+              Pour installer cette application en tant qu'extension Chrome:
+            </p>
+            <ol className="list-decimal list-inside mt-2 space-y-1">
+              <li>Téléchargez le code source complet</li>
+              <li>Exécutez <code>npm run build</code> pour créer la version de production</li>
+              <li>Ouvrez Chrome et accédez à chrome://extensions/</li>
+              <li>Activez le "Mode développeur" en haut à droite</li>
+              <li>Cliquez sur "Charger l'extension non empaquetée" et sélectionnez le dossier <code>dist</code></li>
+              <li>L'extension est maintenant installée et prête à analyser le jeu Apple of Fortune</li>
+            </ol>
           </div>
         </motion.div>
       </div>

@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { Progress } from '@/components/ui/progress';
+import { Loader2 } from 'lucide-react';
 
 interface ProgressBarProps {
   progress: number;
@@ -46,21 +48,18 @@ const ProgressBar = ({
           )}
         >
           <div className="w-full max-w-md">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-xs font-medium">{message}</span>
+            <div className="flex justify-between items-center mb-1.5">
+              <div className="flex items-center">
+                <Loader2 className="w-4 h-4 mr-2 animate-spin text-primary" />
+                <span className="text-xs font-medium">{message}</span>
+              </div>
               <span className="text-xs font-semibold">{Math.round(progress)}%</span>
             </div>
-            <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-              <motion.div 
-                className="h-full bg-primary rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 70,
-                  damping: 20
-                }}
-              />
+            <Progress value={progress} className="h-1.5" />
+            <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+              <span>Extraction des données du jeu</span>
+              <span>Analyse du code source</span>
+              <span>Finalisation</span>
             </div>
           </div>
         </motion.div>

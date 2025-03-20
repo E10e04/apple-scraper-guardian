@@ -6,7 +6,9 @@ export interface Apple {
   id: string;
   type: AppleType;
   position: { x: number; y: number };
-  value?: number;
+  row: number;
+  column: number;
+  multiplier?: number;
 }
 
 export interface GameState {
@@ -17,26 +19,41 @@ export interface GameState {
   isEnabled: boolean;
 }
 
-// Mock data generation for demo purposes
+// Mock data generation based on the real game mechanics
 export const generateMockGameData = (): Apple[] => {
   const apples: Apple[] = [];
   
-  // Generate some random apples
-  const totalApples = 15 + Math.floor(Math.random() * 10); // 15-24 apples
-  const goodAppleCount = Math.ceil(totalApples * 0.3); // ~30% good apples
+  // Apple of Fortune typically has 7-10 rows with varying columns (usually 3-5 per row)
+  const totalRows = 7 + Math.floor(Math.random() * 4); // 7-10 rows
   
-  for (let i = 0; i < totalApples; i++) {
-    const isGood = i < goodAppleCount;
+  for (let row = 0; row < totalRows; row++) {
+    // Number of columns in this row (3-5)
+    const columnsInRow = 3 + Math.floor(Math.random() * 3);
     
-    apples.push({
-      id: `apple-${i}`,
-      type: isGood ? 'good' : 'bad',
-      position: {
-        x: 5 + Math.random() * 90, // 5-95% of width
-        y: 5 + Math.random() * 90  // 5-95% of height
-      },
-      value: isGood ? Math.ceil(Math.random() * 10) : undefined
-    });
+    // Only one apple in each row is 'good', others are 'bad'
+    const goodAppleIndex = Math.floor(Math.random() * columnsInRow);
+    
+    for (let col = 0; col < columnsInRow; col++) {
+      const isGood = col === goodAppleIndex;
+      
+      // Calculate position based on row and column
+      // This creates a pyramid/grid-like layout
+      const xOffset = (row * 5) % 10; // slight horizontal offset for each row
+      const x = 20 + xOffset + (col * (60 / columnsInRow));
+      const y = 10 + (row * (80 / totalRows));
+      
+      // Each row increases the multiplier
+      const multiplier = isGood ? (row + 1) * 0.5 : undefined;
+      
+      apples.push({
+        id: `apple-${row}-${col}`,
+        type: isGood ? 'good' : 'bad',
+        position: { x, y },
+        row,
+        column: col,
+        multiplier
+      });
+    }
   }
   
   return apples;
@@ -48,13 +65,15 @@ export const analyzeGameData = async (
 ): Promise<Apple[]> => {
   console.log('Starting game analysis...');
   
-  // Simulate a multi-stage analysis process
+  // Simulate a multi-stage analysis process for scraping the game
   const stages = [
     { label: 'Initializing analyzer...', duration: 300 },
-    { label: 'Scraping game source code...', duration: 800 },
-    { label: 'Identifying apple elements...', duration: 600 },
-    { label: 'Analyzing game mechanics...', duration: 700 },
-    { label: 'Classifying apple types...', duration: 500 },
+    { label: 'Injecting code into game frame...', duration: 500 },
+    { label: 'Scraping DOM elements...', duration: 800 },
+    { label: 'Analyzing game source code...', duration: 1000 },
+    { label: 'Decompiling game assets...', duration: 700 },
+    { label: 'Extracting outcome determination algorithm...', duration: 600 },
+    { label: 'Identifying winning paths...', duration: 500 },
     { label: 'Finalizing results...', duration: 400 }
   ];
   
@@ -78,9 +97,29 @@ export const analyzeGameData = async (
     onProgress((elapsedTime / totalDuration) * 100);
   }
   
-  // Generate mock result data
+  // In a real extension, this would be the point where we've analyzed the actual game code
+  // and determined the winning positions
   const result = generateMockGameData();
-  console.log('Analysis completed. Found', result.length, 'apples');
+  console.log('Analysis completed. Found winning path through', result.length, 'positions');
   
   return result;
 };
+
+// Function that would be used in a real extension to analyze the actual game
+export const analyzeRealGameSource = (): void => {
+  // In a real extension, this function would:
+  // 1. Access the DOM of the game iframe
+  // 2. Extract the game's JavaScript code
+  // 3. Analyze variables, network calls, and asset loading
+  // 4. Determine how winning positions are calculated
+  
+  console.log('This would analyze the actual game in a real Chrome extension');
+  // Example code would look for patterns in the game's source:
+  // document.querySelectorAll('.game-grid .apple-element').forEach(el => {
+  //   const dataWin = el.getAttribute('data-win');
+  //   if (dataWin === 'true') {
+  //     console.log('Found winning apple:', el);
+  //   }
+  // });
+};
+
